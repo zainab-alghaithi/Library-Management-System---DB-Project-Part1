@@ -1,0 +1,56 @@
+SQL Error Log File:
+❌ Error Message Summary
+ 
+Msg 547: The INSERT statement conflicted with the FOREIGN KEY constraint "FK__Payme
+
+✅ How to Fix It
+Option 1: Check actual LoanIDs before inserting
+Run this first to verify which IDs exist:
+
+ 
+SELECT LoanID, BookID, MemberID FROM Loan;
+Then insert only values with valid LoanIDs. For example:
+
+ 
+-- Let’s say the LoanID for (BookID 3, MemberID 1) is actually 5:
+INSERT INTO Payment (LoanID, PaymentDate, Amount, PaymentMethod)
+VALUES (5, '2024-03-18', 2.00, 'Cash');
+
+
+🛠️ How to Simulate Unavailable Books (e.g., Issued books)
+If a book is on loan (LoanStatus = 'Issued'), you may want to mark it unavailable:
+
+ 
+-- Mark BookID 1 as unavailable (e.g., it's on loan)
+UPDATE Book
+SET IsAvailable = 0
+WHERE BookID = 1;
+Then re-run your query:
+
+ 
+SELECT BookID, Title
+FROM Book
+WHERE IsAvailable = 0;
+You should now see the book(s) you marked.
+
+🧠 Automation Tip (optional)
+To sync availability with loan status, you could run:
+
+UPDATE Book
+SET IsAvailable = 0
+WHERE BookID IN (
+    SELECT BookID
+    FROM Loan
+    WHERE LoanStatus = 'Issued'
+);
+
+Developer Reflection 
+At the end of the project, reflect on: 
+•  What part was the most difficult? 
+• Which SQL command (DDL, DML, DQL) did you learn the most from? 
+•  What did you discover from your error logs that made you think like a real developer?
+Ans:
+ 
+* **Most difficult part:** Writing complex queries with joins and conditions was the hardest.
+* **Most learning from:** I learned the most from DQL commands and real-life data queries.
+* **Error log insight:** Errors taught me to think like a developer by debugging constraints and logic.
